@@ -1,0 +1,4 @@
+ext_jars:自己封装的java请求的包。mongotest:用于查询删除mongo数据库，并可从响应数据中获取操作的文档数和查询结果
+lib:其他一些测试用例中会用到的jar包，如操作json的jar,操作mysql的数据库的jar等
+report：报告的样式模板
+build.xml：ant执行jmx文件生成报告的配置文件样例

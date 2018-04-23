@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+  
+<project name="ant-jmeter-test" default="run" basedir=".">  
+      
+    <tstamp>  
+        <format property="time" pattern="yyyyMMddhhmm" />  
+    </tstamp>  
+    <property name="basedirectory" value="/usr/apache-jmeter-4.0/extras" />  
+    <!-- 需要改成自己本地的 Jmeter 目录-->    
+    <property name="jmeter.home" value="/usr/apache-jmeter-4.0" />  
+    <!-- jmeter生成jtl格式的结果报告的路径-->   
+    <property name="jmeter.result.jtl.dir" value="${basedirectory}/report" />  
+    <!-- jmeter生成html格式的结果报告的路径-->  
+    <property name="jmeter.result.html.dir" value="${basedirectory}/report" />  
+    <!-- Name of test (without .jmx) -->  
+    <property name="test" value="store_rebuild_api"/>  
+    <!-- 生成的报告的前缀-->    
+    <property name="ReportName" value="TestReport" />  
+    <property name="jmeter.result.jtlName" value="${jmeter.result.jtl.dir}/${test}.jtl" />  
+    <property name="jmeter.result.htmlName" value="${jmeter.result.html.dir}/${test}.html" />  
+      
+    <path id="xslt.classpath">  
+        <fileset dir="${jmeter.home}/lib" includes="xalan*.jar"/>  
+        <fileset dir="${jmeter.home}/lib" includes="serializer*.jar"/>  
+    </path>  
+      
+    <target name="run">  
+        <antcall target="test" />  
+        <antcall target="report" />  
+    </target>  
+      
+    <target name="test">  
+        <taskdef name="jmeter" classname="org.programmerplanet.ant.taskdefs.jmeter.JMeterTask" />  
+      
+    <jmeter jmeterhome="${jmeter.home}" resultlog="${jmeter.result.jtlName}">  
+             <!-- 指定要运行的脚本。"*.jmx"指包含此目录下的所有jmeter脚本-->  
+            <testplans dir="/var/lib/jenkins/workspace/Interface_Test/jmx" includes="*.jmx" />  
+        </jmeter>  
+    </target>  
+          
+    <target name="report">  
+        <tstamp> <format property="report.datestamp" pattern="yyyy/MM/dd HH:mm" /></tstamp>  
+        <xslt classpathref="xslt.classpath"  
+              force="true"  
+              in="${jmeter.result.jtlName}"  
+              out="${jmeter.result.htmlName}"  
+	      style="${jmeter.home}/extras/jmeter-results-shanhe-me.xsl">  	  
+              <param name="dateReport" expression="${report.datestamp}"/>  
+        </xslt>  
+        <copy todir="${jmeter.result.html.dir}">  
+            <fileset dir="${jmeter.home}/extras">  
+                <include name="collapse.png" />  
+                <include name="expand.png" />  
+            </fileset>  
+        </copy>  
+    </target>  
+      
+</project> 
